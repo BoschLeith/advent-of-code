@@ -60,10 +60,22 @@ func main() {
 	sort.Ints(leftList)
 	sort.Ints(rightList)
 
-	total := 0
+	totalDistance := 0
 	for i := range leftList {
-		total += abs(leftList[i] - rightList[i])
+		totalDistance += abs(leftList[i] - rightList[i])
 	}
 
-	fmt.Println(total)
+	similarityScore := 0
+	for i := range leftList {
+		count := 0
+		for _, value := range rightList {
+			if value == leftList[i] {
+				count++
+			}
+		}
+		similarityScore += leftList[i] * count
+	}
+
+	fmt.Printf("Total Distance: %d\n", totalDistance)
+	fmt.Printf("Similarity Score: %d\n", similarityScore)
 }
