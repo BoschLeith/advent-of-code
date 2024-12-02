@@ -8,6 +8,28 @@ import (
 	"strings"
 )
 
+func main() {
+	reports, err := convertInput("input.txt")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	safeReports := 0
+	tolerableReports := 0
+	for _, report := range reports {
+		if isReportSafe(report) {
+			safeReports++
+		} else if checkReportSafetyWithDeletion(report) {
+			tolerableReports++
+		}
+	}
+
+	fmt.Printf("Safe Reports: %d\n", safeReports)
+	fmt.Printf("Tolerable Reports: %d\n", tolerableReports)
+	fmt.Printf("Total Reports: %d\n", safeReports+tolerableReports)
+}
+
 func convertInput(fileName string) ([][]int, error) {
 	var reports [][]int
 
@@ -41,43 +63,50 @@ func convertInput(fileName string) ([][]int, error) {
 	return reports, nil
 }
 
-func main() {
-	reports, err := convertInput("input.txt")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+func isReportSafe(report []int) bool {
+	isIncreasing, isDecreasing := false, false
+	for i := 1; i < len(report); i++ {
+		diff := report[i] - report[i-1]
 
-	safeReports := 0
-	for _, report := range reports {
-		isIncreasing := true
-		isDecreasing := true
-		for i := 0; i < len(report)-1; i++ {
-			diff := report[i+1] - report[i]
-
-			if diff > 3 {
-				isDecreasing = false
-				isIncreasing = false
-				break
-			} else if diff < -3 {
-				isDecreasing = false
-				isIncreasing = false
-				break
-			} else if diff < 0 {
-				isIncreasing = false
-			} else if diff > 0 {
-				isDecreasing = false
-			} else {
-				isIncreasing = false
-				isDecreasing = false
-				break
-			}
+		if diff > 0 {
+			isIncreasing = true
+		} else if diff < 0 {
+			isDecreasing = true
+		} else {
+			return false
 		}
 
-		if isIncreasing || isDecreasing {
-			safeReports++
+		if isIncreasing && isDecreasing {
+			return false
+		}
+
+		if diff > 3 || diff < -3 {
+			return false
+		}
+	}
+	return true
+}
+
+func checkReportSafetyWithDeletion(report []int) bool {
+
+	for i := range report {
+		isSafe := isReportSafeWithDeletion(report, i)
+		if isSafe {
+			return true
 		}
 	}
 
-	fmt.Printf("Safe Reports: %d\n", safeReports)
+	return false
+}
+
+func isReportSafeWithDeletion(report []int, deleteIndex int) bool {
+	copyReport := make([]int, len(report))
+	copy(copyReport, report)
+
+	if deleteIndex == len(copyReport)-1 {
+		copyReport = copyReport[:deleteIndex]
+	} else {
+		copyReport = append(copyReport[:deleteIndex], copyReport[deleteIndex+1:]...)
+	}
+	return isReportSafe(copyReport)
 }
