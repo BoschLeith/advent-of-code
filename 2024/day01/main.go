@@ -7,14 +7,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-)
 
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
+	"github.com/BoschLeith/advent-of-code/utils"
+)
 
 func main() {
 	file, err := os.Open("input.txt")
@@ -29,20 +24,20 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		stringParts := strings.Fields(line)
+		subStrings := strings.Fields(line)
 
-		if len(stringParts) < 2 {
+		if len(subStrings) < 2 {
 			fmt.Println("Invalid line:", line)
 			continue
 		}
 
-		leftNum, err := strconv.Atoi(stringParts[0])
+		leftNum, err := strconv.Atoi(subStrings[0])
 		if err != nil {
 			fmt.Println("Error converting left number:", err)
 			return
 		}
 
-		rightNum, err := strconv.Atoi(stringParts[1])
+		rightNum, err := strconv.Atoi(subStrings[1])
 		if err != nil {
 			fmt.Println("Error converting right number:", err)
 			return
@@ -62,7 +57,7 @@ func main() {
 
 	totalDistance := 0
 	for i := range leftList {
-		totalDistance += abs(leftList[i] - rightList[i])
+		totalDistance += utils.Abs(leftList[i] - rightList[i])
 	}
 
 	similarityScore := 0

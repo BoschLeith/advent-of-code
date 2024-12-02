@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/BoschLeith/advent-of-code/utils"
 )
 
 func main() {
@@ -42,11 +44,11 @@ func convertInput(fileName string) ([][]int, error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		stringParts := strings.Fields(line)
+		subStrings := strings.Fields(line)
 
 		var report []int
-		for _, part := range stringParts {
-			level, err := strconv.Atoi(part)
+		for _, str := range subStrings {
+			level, err := strconv.Atoi(str)
 			if err != nil {
 				return nil, fmt.Errorf("error converting level number: %w", err)
 			}
@@ -76,11 +78,7 @@ func isReportSafe(report []int) bool {
 			return false
 		}
 
-		if isIncreasing && isDecreasing {
-			return false
-		}
-
-		if diff > 3 || diff < -3 {
+		if isIncreasing && isDecreasing || utils.Abs(diff) > 3 {
 			return false
 		}
 	}
