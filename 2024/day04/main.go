@@ -40,6 +40,9 @@ func main() {
 	for substring, count := range counts {
 		fmt.Printf("The substring '%s' was found %d times.\n", substring, count)
 	}
+
+	result := countXMAS(text)
+	fmt.Println("Number of X-MAS occurrences:", result)
 }
 
 func countOccurrences(text []string, substrings []string, counts map[string]int) {
@@ -104,4 +107,39 @@ func countDiagonal(text []string, startRow, startCol, rowStep, colStep int, subs
 	for _, substring := range substrings {
 		counts[substring] += strings.Count(diagonalString.String(), substring)
 	}
+}
+
+func countXMAS(text []string) int {
+	count := 0
+	rows := len(text)
+	cols := len(text[0])
+
+	for i := 1; i < rows-1; i++ {
+		for j := 1; j < cols-1; j++ {
+			if text[i][j] == 'A' {
+				// Check for the first pattern (M . S)
+				if text[i-1][j-1] == 'M' && text[i-1][j+1] == 'S' &&
+					text[i+1][j-1] == 'M' && text[i+1][j+1] == 'S' {
+					count++ // Found one X-MAS (Pattern 1)
+				}
+				// Check for the second pattern (S . S)
+				if text[i-1][j-1] == 'S' && text[i-1][j+1] == 'S' &&
+					text[i+1][j-1] == 'M' && text[i+1][j+1] == 'M' {
+					count++ // Found one X-MAS (Pattern 2)
+				}
+				// Check for the third pattern (M . M)
+				if text[i-1][j-1] == 'M' && text[i-1][j+1] == 'M' &&
+					text[i+1][j-1] == 'S' && text[i+1][j+1] == 'S' {
+					count++ // Found one X-MAS (Pattern 3)
+				}
+				// Check for the fourth pattern (S . M)
+				if text[i-1][j-1] == 'S' && text[i-1][j+1] == 'M' &&
+					text[i+1][j-1] == 'S' && text[i+1][j+1] == 'M' {
+					count++ // Found one X-MAS (Pattern 4)
+				}
+			}
+		}
+	}
+
+	return count
 }
